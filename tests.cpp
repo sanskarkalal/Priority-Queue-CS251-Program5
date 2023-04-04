@@ -27,12 +27,14 @@ using namespace std;
 
 TEST_CASE("(0) no tests") 
 {
-    priorityqueue<int> Q;
-    Q.enqueue(1,3);
-    Q.enqueue(2,2);
-    Q.enqueue(3,4);
-    Q.enqueue(4,1);
-    REQUIRE(Q.Size() == 4);
+    priorityqueue<string> pq;
+    pq.enqueue("a", 1);
+    pq.enqueue("b", 2);
+    pq.enqueue("c", 3);
+    pq.enqueue("d", 4);
+    pq.begin();
+    string value;
+    int priority;
 
 }
 

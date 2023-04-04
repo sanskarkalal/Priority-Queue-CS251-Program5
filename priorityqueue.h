@@ -29,7 +29,27 @@ private:
     NODE* root;  // pointer to root node of the BST
     int size;  // # of elements in the pqueue
     NODE* curr;  // pointer to next item in pqueue (see begin and next)
-    
+
+    void inorder (NODE * root, ostream &ss){
+        if(root == nullptr){
+            return;
+        }
+
+        inorder(root->left, ss);
+        ss <<root->priority <<" value: "<< root->value << endl;
+        if(root->dup){
+            NODE * temp = root->link;
+            while(temp != nullptr){
+                ss <<temp->priority <<" value: "<< temp->value << endl;
+                temp = temp->link;
+            }
+        }
+
+
+        inorder(root->right,ss);
+    }
+
+
 public:
 
 
@@ -84,7 +104,7 @@ public:
     // O(n), where n is total number of nodes in custom BST
     //
     void clear() {
-        
+
         
         // TO DO: write this function.
         
@@ -182,8 +202,19 @@ public:
     // of duplicate priorities
     //
     T dequeue() {
-        T valueOut;
-        return valueOut; // TO DO: update this return
+        NODE * current = root;
+        NODE * prev = nullptr;
+        while(current->left != nullptr){
+            prev = current;
+            current = current->left;
+        }
+        if(current->dup){
+            NODE * temp = current;
+            T value = temp->value;
+            prev->left = temp->link;
+        }
+
+        // TO DO: update this return
         
     }
     
@@ -216,7 +247,9 @@ public:
     //    }
     //    cout << priority << " value: " << value << endl;
     void begin() {
-        
+        while(curr->left != nullptr){
+            curr = curr->left;
+        }
         // TO DO: write this function.
         
         
@@ -244,10 +277,11 @@ public:
     //    cout << priority << " value: " << value << endl;
     //
     bool next(T& value, int &priority) {
-        
-        
+
         // TO DO: write this function.
-        return true; // TO DO: update this return
+
+        
+
         
         
     }
@@ -261,14 +295,12 @@ public:
     //  2 value: Sven
     //  3 value: Gwen"
     //
-    string toString() {
-        
-        
-        // TO DO: write this function.
-        string str = "";
-        return str; // TO DO: update this return
-        
-        
+    string toString()
+    {
+        stringstream ss;
+        inorder(root,ss);
+        return ss.str();
+
     }
     
     //
