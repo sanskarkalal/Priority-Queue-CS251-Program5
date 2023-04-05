@@ -45,8 +45,17 @@ private:
             }
         }
 
-
         inorder(root->right,ss);
+    }
+
+    void postorder(NODE * root){
+        if(root == nullptr){
+            return;
+        }
+        postorder(root->left);
+        postorder(root->right);
+        postorder(root->link);
+        delete root;
     }
 
 
@@ -62,7 +71,7 @@ public:
     //
     priorityqueue() {
         root = nullptr;
-        
+
         size = 0;
         curr = root;
     }
@@ -89,14 +98,19 @@ public:
     // O(n), where n is total number of nodes in custom BST
     //
     priorityqueue& operator=(const priorityqueue& other) {
-        
-        
+        clear();
+
+        this->root = other.root;
+        this->size = other.size;
+        this->curr = other.curr;
+
+
         // TO DO: write this function.
         return *this;
-        
+
 
     }
-    
+
     //
     // clear:
     //
@@ -104,13 +118,14 @@ public:
     // O(n), where n is total number of nodes in custom BST
     //
     void clear() {
+        postorder(root);
+        size = 0;
 
-        
         // TO DO: write this function.
-        
-        
+
+
     }
-    
+
     //
     // destructor:
     //
@@ -118,11 +133,11 @@ public:
     // O(n), where n is total number of nodes in custom BST
     //
     ~priorityqueue() {
-        
-        
+
+
         // TO DO: write this function.
-        
-        
+
+
     }
 
 
@@ -136,7 +151,7 @@ public:
     //
     // Inserts the value into the custom BST in the correct location based on
     // priority.
-    // O(logn + m), where n is number of unique nodes in tree and m is number 
+    // O(logn + m), where n is number of unique nodes in tree and m is number
     // of duplicate priorities
     //
     void enqueue(T value, int priority) {
@@ -163,24 +178,26 @@ public:
         newNode->parent = prev;
         if(dup){
             // duplicate priority
-            cout<<"duplicate priority: " << priority << " and value: " << value<<endl;
+
             while(current->link != nullptr){
+                prev = current;
                 current = current->link;
             }
+            newNode->parent = current;
             current->link = newNode;
         }
         else{
             if(prev == nullptr){
-                cout<< "adding new node to the root with priority: " << priority << " and value: " << value<<endl ;
+
                 root = newNode;
             }
             else if(prev->priority>priority){
-                cout<< "adding new node to the left with priority: " << priority << " and value: " << value<<endl ;
+
 
                 prev->left = newNode;
             }
             else{
-                cout<< "adding new node to the right with priority: " << priority << " and value: " << value<<endl ;
+
                 prev->right = newNode;
             }
         }
@@ -190,34 +207,91 @@ public:
 
 
 
-        // TO DO: write this function.
-  
+    // TO DO: write this function.
+
 
     //
     // dequeue:
     //
     // returns the value of the next element in the priority queue and removes
     // the element from the priority queue.
-    // O(logn + m), where n is number of unique nodes in tree and m is number 
+    // O(logn + m), where n is number of unique nodes in tree and m is number
     // of duplicate priorities
     //
     T dequeue() {
-        NODE * current = root;
-        NODE * prev = nullptr;
-        while(current->left != nullptr){
-            prev = current;
-            current = current->left;
+        NODE *temp = root;
+        NODE *prev = nullptr;
+        T valueOut;
+        if (temp == nullptr) {
+            cout << "empty" << endl;
+            return T();
         }
-        if(current->dup){
-            NODE * temp = current;
-            T value = temp->value;
-            prev->left = temp->link;
+        while (temp->left != nullptr) {
+            prev = temp;
+            temp = temp->left;
         }
 
-        // TO DO: update this return
-        
+        if (temp->dup == false) {
+            if (temp == root) {
+                root = temp->right;
+                temp->parent = nullptr;
+                valueOut = temp->value;
+
+                delete temp;
+                size--;
+                return valueOut;
+            } else {
+                if (temp->right != nullptr) {
+                    temp->right->parent = prev;
+                }
+                prev->left = temp->right;
+                valueOut = temp->value;
+
+                delete temp;
+                size--;
+                return valueOut;
+            }
+
+        } else {
+            if (temp == root) {
+                valueOut = temp->value;
+                if(temp->link->link != nullptr){
+                    temp->link->dup = true;
+                }else{
+                    temp->link->dup = false;
+                }
+                if(temp->right != nullptr) {
+                    temp->link->right = temp->right;
+                    temp->right->parent = temp->link;
+                }
+
+                temp->link->parent = nullptr;
+                root = temp->link;
+                delete temp;
+                size--;
+                return valueOut;
+            } else {
+                valueOut = temp->value;
+                if(temp->link->link != nullptr){
+                    temp->link->dup = true;
+                }else{
+                    temp->link->dup = false;
+                }
+                if (temp->right != nullptr) {
+                    temp->link->right = temp->right;
+                    temp->right->parent = temp->link;
+                }
+                prev->left = temp->link;
+                temp->link->parent = prev;
+                delete temp;
+                size--;
+                return valueOut;
+
+
+            }
+        }
     }
-    
+
     //
     // Size:
     //
@@ -229,7 +303,7 @@ public:
         return size; // TO DO: update this return
 
     }
-    
+
     //
     // begin
     //
@@ -247,14 +321,15 @@ public:
     //    }
     //    cout << priority << " value: " << value << endl;
     void begin() {
+        curr = root;
         while(curr->left != nullptr){
             curr = curr->left;
         }
         // TO DO: write this function.
-        
-        
+
+
     }
-    
+
     //
     // next
     //
@@ -278,14 +353,19 @@ public:
     //
     bool next(T& value, int &priority) {
 
+        value = curr->value;
+        priority = curr->priority;
+
+        // move in the linked list
+
         // TO DO: write this function.
 
-        
 
-        
-        
+
+        return true; // TO DO: update this return
+
     }
-    
+
     //
     // toString:
     //
@@ -302,25 +382,30 @@ public:
         return ss.str();
 
     }
-    
+
     //
     // peek:
     //
     // returns the value of the next element in the priority queue but does not
     // remove the item from the priority queue.
-    // O(logn + m), where n is number of unique nodes in tree and m is number 
+    // O(logn + m), where n is number of unique nodes in tree and m is number
     // of duplicate priorities
     //
     T peek() {
-        
-        
+
+
         // TO DO: write this function.
         T valueOut;
+        NODE * temp = root;
+        while(temp->left != NULL){
+            temp = temp->left;
+        }
+        valueOut = temp->value;
         return valueOut; // TO DO: update this return
-        
-        
+
+
     }
-    
+
     //
     // ==operator
     //
@@ -329,14 +414,14 @@ public:
     // O(n), where n is total number of nodes in custom BST
     //
     bool operator==(const priorityqueue& other) const {
-        
-        
+
+
         // TO DO: write this function.
         return true; // TO DO: update this return
-        
-        
+
+
     }
-    
+
     //
     // getRoot - Do not edit/change!
     //
