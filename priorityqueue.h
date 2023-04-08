@@ -406,6 +406,14 @@ public:
         value = curr->value;
         priority = curr->priority;
 
+        if(curr->link != nullptr) {
+            curr = curr->link;
+            return true;
+        }
+        while(curr->parent != nullptr && curr->priority == curr->parent->priority ){
+            curr = curr->parent;
+        }
+
         if(curr->right != NULL){
             curr = curr->right;
             while(curr->left != NULL){
@@ -413,14 +421,21 @@ public:
             }
             return true;
         }else{
-            while(curr->parent->priority < curr->priority && curr->parent != nullptr){
+            while(curr->parent != nullptr && curr->parent->priority < curr->priority){
                 curr = curr->parent;
-            }
-            if(curr->parent!= NULL){
-                curr = curr->parent;
+                if(curr->parent == nullptr){
+                    curr = nullptr;
+                    return false;
+                }
             }
 
-            return true;
+            if(curr->parent!= NULL){
+                curr = curr->parent;
+                return true;
+            }
+            return false;
+
+
         }
 
     }

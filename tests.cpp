@@ -72,7 +72,7 @@ TEST_CASE("(0) no tests")
     cout << value << " " << priority << endl;
     pq.next(value,priority);
     cout << value << " " << priority << endl;
-    pq.next(value,priority);
+    cout<< pq.next(value,priority);
     cout << value << " " << priority << endl;
 
 
