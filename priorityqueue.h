@@ -1,3 +1,4 @@
+
 /// @file priorityqueue.h
 ///
 ///
@@ -36,13 +37,16 @@ private:
         }
 
         inorder(root->left, ss);
-        ss <<root->priority <<" value: "<< root->value << endl;
+        //ss <<root->priority <<" value: "<< root->value << endl;
         if(root->dup){
-            NODE * temp = root->link;
+            NODE * temp = root;
             while(temp != nullptr){
                 ss <<temp->priority <<" value: "<< temp->value << endl;
                 temp = temp->link;
             }
+        }
+        else{
+            ss <<root->priority <<" value: "<< root->value << endl;
         }
 
         inorder(root->right,ss);
@@ -55,10 +59,66 @@ private:
         postorder(root->left);
         postorder(root->right);
         postorder(root->link);
+
         delete root;
     }
 
+    void preorder(NODE* node){
 
+        if(node == NULL){
+            return;
+        }else{
+            NODE * temp = node;
+            enqueue(temp->value,temp->priority);
+
+            if(temp->link != NULL){
+                while(temp->link != NULL){
+                    temp = temp->link;
+                    enqueue(temp->value,temp->priority);
+                }
+            }
+
+            preorder(node->left);
+            preorder(node->right);
+        }
+
+
+    }
+
+
+    NODE* getNewNode(T value, int priority){
+        NODE * newNode = new NODE();
+        newNode->left = nullptr;
+        newNode->right = nullptr;
+        newNode->parent = nullptr;
+        newNode->link = nullptr;
+        newNode->dup = false;
+        newNode->value = value;
+        newNode->priority = priority;
+        return newNode;
+    }
+
+    bool compare(NODE * one,NODE* two) const{
+        if(one  == NULL && two == NULL){
+            return true;
+        }
+        if(one == NULL && two != NULL){
+            return false;
+        }
+        if(one->value != two->value){
+            return false;
+        }
+        if(!compare(one->left,two->left)){
+            return false;
+        }
+        if(!compare(one->right,two->right)){
+            return false;
+        }
+        if(!compare(one->link,two->link)){
+            return false;
+        }
+        return true;
+    }
 public:
 
 
@@ -71,23 +131,10 @@ public:
     //
     priorityqueue() {
         root = nullptr;
-
         size = 0;
         curr = root;
     }
 
-
-    NODE * getNewNode(T value, int priority){
-        NODE * newNode = new NODE();
-        newNode->left = nullptr;
-        newNode->right = nullptr;
-        newNode->parent = nullptr;
-        newNode->link = nullptr;
-        newNode->dup = false;
-        newNode->value = value;
-        newNode->priority = priority;
-        return newNode;
-    }
 
 
     //
@@ -98,11 +145,10 @@ public:
     // O(n), where n is total number of nodes in custom BST
     //
     priorityqueue& operator=(const priorityqueue& other) {
-        clear();
-
-        this->root = other.root;
+        this->clear();
+        preorder(other.root);
         this->size = other.size;
-        this->curr = other.curr;
+        //this->root = other.root;
 
 
         // TO DO: write this function.
@@ -120,6 +166,7 @@ public:
     void clear() {
         postorder(root);
         size = 0;
+        root = NULL;
 
         // TO DO: write this function.
 
@@ -134,7 +181,7 @@ public:
     //
     ~priorityqueue() {
 
-
+        this->clear();
         // TO DO: write this function.
 
 
@@ -352,19 +399,39 @@ public:
     //    cout << priority << " value: " << value << endl;
     //
     bool next(T& value, int &priority) {
+        if (curr == nullptr) {
+            return false;
+        }
 
         value = curr->value;
         priority = curr->priority;
 
-        // move in the linked list
+        if(curr->right != NULL){
+            curr = curr->right;
+            while(curr->left != NULL){
+                curr = curr->left;
+            }
+            return true;
+        }else{
+            while(curr->parent->priority < curr->priority && curr->parent != nullptr){
+                curr = curr->parent;
+            }
+            if(curr->parent!= NULL){
+                curr = curr->parent;
+            }
 
-        // TO DO: write this function.
-
-
-
-        return true; // TO DO: update this return
+            return true;
+        }
 
     }
+
+
+
+
+
+
+
+
 
     //
     // toString:
@@ -414,10 +481,15 @@ public:
     // O(n), where n is total number of nodes in custom BST
     //
     bool operator==(const priorityqueue& other) const {
+        if(size != other.size){
+            return false;
+        }
+
+        return compare(root,other.root);
 
 
         // TO DO: write this function.
-        return true; // TO DO: update this return
+        // TO DO: update this return
 
 
     }

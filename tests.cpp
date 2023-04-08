@@ -22,12 +22,58 @@
 
 #include "catch.hpp"
 #include "priorityqueue.h"
+#include "map"
 
 using namespace std;
 
 TEST_CASE("(0) no tests") 
 {
-
+    priorityqueue<string> pq;
+    pq.enqueue("ten",10);
+    pq.enqueue("two",2);
+    pq.enqueue("two 1",2);
+    pq.enqueue("one",1);
+    pq.enqueue("one 1",1);
+    pq.enqueue("one 2",1);
+    pq.enqueue("thirteen",13);
+    pq.enqueue("fourteen",14);
+    pq.enqueue("twelve",12);
+    pq.enqueue("six",6);
+    pq.enqueue("six 1",6);
+    pq.enqueue("eleven",11);
+    pq.begin();
+    string value = "";
+    int priority = 0;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
+    pq.next(value,priority);
+    cout << value << " " << priority << endl;
 
 
 
