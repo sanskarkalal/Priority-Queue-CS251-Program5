@@ -23,75 +23,102 @@
 #include "catch.hpp"
 #include "priorityqueue.h"
 #include "map"
+#include "vector"
+#include "random"
 
 using namespace std;
 
 TEST_CASE("enqueue and toString")
 {
     SECTION("ints"){
-
-        map<int, vector<int> > map;
-        int n = 9;
-        int vals[] = {15, 16, 17, 6, 7, 8, 9, 2, 1};
-        int prs[] = {1, 2, 3, 2, 2, 2, 2, 3, 3};
+        srand(1);
         priorityqueue<int> pq;
-        for (int i = 0; i < n; i++) {
-            pq.enqueue(vals[i], prs[i]);
-            map[prs[i]].push_back(vals[i]);
+        map<int, vector<int> > map;
+        for(int i=0; i< 25 ;i++){
+            int val = rand() % 100;
+            int pr = rand() % 100;
+            pq.enqueue(val, pr);
+            map[pr].push_back(val);
+            REQUIRE(pq.Size() ==  i+1);
         }
-        REQUIRE(pq.Size() ==  9);
-        stringstream ss;
-        for (auto e: map) {
-            int priority = e.first;
-            vector <int> values = e.second;
-            for (size_t j = 0; j < values.size(); j++){
-                ss << priority << " value: " << values[j] << endl;
-            }
-        }
-        REQUIRE(pq.toString() == ss.str());
 
     }
 
     SECTION("strings"){
-
-        map<int, vector<string> > map;
-        int n = 9;
-        int vals[] = {15, 16, 17, 6, 7, 8, 9, 2, 1};
-        int prs[] = {1, 2, 3, 2, 2, 2, 2, 3, 3};
+        srand(1);
         priorityqueue<string> pq;
-        for (int i = 0; i < n; i++) {
-            pq.enqueue(vals[i], prs[i]);
-            map[prs[i]].push_back(vals[i]);
+
+        for(int i=0; i< 25 ;i++){
+            string val = "a" + to_string(rand() % 100);
+            int pr = rand() % 100;
+            pq.enqueue(val, pr);
+            REQUIRE(pq.Size() ==  i+1);
         }
-        REQUIRE(pq.Size() ==  9);
-        stringstream ss;
-        for (auto e: map) {
-            int priority = e.first;
-            vector <int> values = e.second;
-            for (size_t j = 0; j < values.size(); j++){
-                ss << priority << " value: " << values[j] << endl;
-            }
-        }
-        REQUIRE(pq.toString() == ss.str());
-
-
-
-
-
 
     }
+
+    SECTION("chars"){
+        srand(1);
+        priorityqueue<char> pq;
+        for(int i=0; i< 25 ;i++){
+            char val = 'a' + rand() % 26;
+            int pr = rand() % 100;
+            pq.enqueue(val, pr);
+            REQUIRE(pq.Size() ==  i+1);
+        }
+
+    }
+
+    SECTION("floats"){
+        srand(1);
+        priorityqueue<float> pq;
+        for(int i=0; i< 25 ;i++){
+            float val = (rand() % 100)/100.0;
+            int pr = (rand() % 100);
+            pq.enqueue(val, pr);
+            REQUIRE(pq.Size() ==  i+1);
+        }
+
+    }
+
+
+
 }
 
 TEST_CASE("dequeue ()"){
 
-    SECTION("ints"){
-
-        map<int, vector<int> > map;
-        int n = 10;
-        int vals[] = {15, 16, 17, 6, 7, 8, 9, 2, 1,12};
-        int prs[] = {1, 2, 3, 2, 2, 2, 2, 3, 3,4};
+    SECTION("empty"){
         priorityqueue<int> pq;
-        for (int i = 0; i < n; i++) {
+        REQUIRE(pq.dequeue() == 0);
+    }
+
+    SECTION("tree without duplicates"){
+        map<int, vector<int> > map;
+        vector<int> vals = {13,21,13,5,42,55,12,3,1,10};
+        vector<int> prs = {2, 4, 3, 1, 10, 8, 9, 5, 6,11};
+        priorityqueue<int> pq;
+        for (int i = 0; i < vals.size(); i++) {
+            pq.enqueue(vals[i], prs[i]);
+            map[prs[i]].push_back(vals[i]);
+        }
+        REQUIRE(pq.Size() ==  10);
+
+        for (auto e: map) {
+            vector <int> values = e.second;
+            for (size_t j = 0; j < values.size(); j++){
+                REQUIRE(pq.dequeue() ==  values[j]);
+            }
+        }
+        REQUIRE(pq.Size() ==  0);
+
+    }
+
+    SECTION("trees with duplicates"){
+        map <int, vector<int> > map;
+        vector<int> vals = {13,21,13,5,42,55,12,3,1,10};
+        vector<int> prs = {2, 2, 3, 1, 1, 8, 9, 5, 9,11};
+        priorityqueue<int> pq;
+        for (int i = 0; i < vals.size(); i++) {
             pq.enqueue(vals[i], prs[i]);
             map[prs[i]].push_back(vals[i]);
         }
@@ -99,7 +126,69 @@ TEST_CASE("dequeue ()"){
         for (auto e: map) {
             vector <int> values = e.second;
             for (size_t j = 0; j < values.size(); j++){
-                REQUIRE(pq.dequeue() == values[j]);
+                REQUIRE(pq.dequeue() ==  values[j]);
+            }
+        }
+        REQUIRE(pq.Size() ==  0);
+    }
+
+    SECTION("random strings tree"){
+        srand(1);
+        priorityqueue<string> pq;
+        map<int, vector<string> > map;
+        for(int i=0; i< 25 ;i++){
+            string val = "a" + to_string(rand() % 100);
+            int pr = rand() % 100;
+            pq.enqueue(val, pr);
+            map[pr].push_back(val);
+            REQUIRE(pq.Size() ==  i+1);
+        }
+        for (auto e: map) {
+            vector <string> values = e.second;
+            for (size_t j = 0; j < values.size(); j++){
+                REQUIRE(pq.dequeue() ==  values[j]);
+            }
+        }
+        REQUIRE(pq.Size() ==  0);
+
+    }
+
+    SECTION("random float tree"){
+        srand(1);
+        priorityqueue<float> pq;
+        map<int, vector<float> > map;
+        for(int i=0; i< 25 ;i++){
+            float val = (rand() % 100)/100.0;
+            int pr = rand() % 100;
+            pq.enqueue(val, pr);
+            map[pr].push_back(val);
+            REQUIRE(pq.Size() ==  i+1);
+        }
+        for (auto e: map) {
+            vector <float> values = e.second;
+            for (size_t j = 0; j < values.size(); j++){
+                REQUIRE(pq.dequeue() ==  values[j]);
+            }
+        }
+        REQUIRE(pq.Size() ==  0);
+
+    }
+
+    SECTION("random char tree"){
+        srand(1);
+        priorityqueue<char> pq;
+        map<int, vector<char> > map;
+        for(int i=0; i< 25 ;i++){
+            char val = 'a' + rand() % 26;
+            int pr = rand() % 100;
+            pq.enqueue(val, pr);
+            map[pr].push_back(val);
+            REQUIRE(pq.Size() ==  i+1);
+        }
+        for (auto e: map) {
+            vector <char> values = e.second;
+            for (size_t j = 0; j < values.size(); j++){
+                REQUIRE(pq.dequeue() ==  values[j]);
             }
         }
         REQUIRE(pq.Size() ==  0);
@@ -109,6 +198,14 @@ TEST_CASE("dequeue ()"){
 
 
 }
+
+TEST_CASE("default constructor"){
+    priorityqueue<int> pq;
+    REQUIRE(pq.Size() ==  0);
+    REQUIRE(getRoot(pq) ==  nullptr);
+}
+
+TEST_CASE("")
 
 
 

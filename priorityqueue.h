@@ -270,7 +270,6 @@ public:
         NODE *prev = nullptr;
         T valueOut;
         if (temp == nullptr) {
-            cout << "empty" << endl;
             return T();
         }
         while (temp->left != nullptr) {
