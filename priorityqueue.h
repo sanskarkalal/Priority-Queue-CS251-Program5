@@ -476,7 +476,6 @@ public:
     T peek() {
 
 
-        // TO DO: write this function.
         T valueOut;
         NODE * temp = root;
         while(temp->left != NULL){

@@ -26,60 +26,85 @@
 
 using namespace std;
 
-TEST_CASE("(0) no tests") 
+TEST_CASE("enqueue and toString")
 {
-    priorityqueue<string> pq;
-    pq.enqueue("ten",10);
-    pq.enqueue("two",2);
-    pq.enqueue("two 1",2);
-    pq.enqueue("one",1);
-    pq.enqueue("one 1",1);
-    pq.enqueue("one 2",1);
-    pq.enqueue("thirteen",13);
-    pq.enqueue("fourteen",14);
-    pq.enqueue("twelve",12);
-    pq.enqueue("six",6);
-    pq.enqueue("six 1",6);
-    pq.enqueue("eleven",11);
-    pq.begin();
-    string value = "";
-    int priority = 0;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    pq.next(value,priority);
-    cout << value << " " << priority << endl;
-    cout<< pq.next(value,priority);
-    cout << value << " " << priority << endl;
+    SECTION("ints"){
+
+        map<int, vector<int> > map;
+        int n = 9;
+        int vals[] = {15, 16, 17, 6, 7, 8, 9, 2, 1};
+        int prs[] = {1, 2, 3, 2, 2, 2, 2, 3, 3};
+        priorityqueue<int> pq;
+        for (int i = 0; i < n; i++) {
+            pq.enqueue(vals[i], prs[i]);
+            map[prs[i]].push_back(vals[i]);
+        }
+        REQUIRE(pq.Size() ==  9);
+        stringstream ss;
+        for (auto e: map) {
+            int priority = e.first;
+            vector <int> values = e.second;
+            for (size_t j = 0; j < values.size(); j++){
+                ss << priority << " value: " << values[j] << endl;
+            }
+        }
+        REQUIRE(pq.toString() == ss.str());
+
+    }
+
+    SECTION("strings"){
+
+        map<int, vector<string> > map;
+        int n = 9;
+        int vals[] = {15, 16, 17, 6, 7, 8, 9, 2, 1};
+        int prs[] = {1, 2, 3, 2, 2, 2, 2, 3, 3};
+        priorityqueue<string> pq;
+        for (int i = 0; i < n; i++) {
+            pq.enqueue(vals[i], prs[i]);
+            map[prs[i]].push_back(vals[i]);
+        }
+        REQUIRE(pq.Size() ==  9);
+        stringstream ss;
+        for (auto e: map) {
+            int priority = e.first;
+            vector <int> values = e.second;
+            for (size_t j = 0; j < values.size(); j++){
+                ss << priority << " value: " << values[j] << endl;
+            }
+        }
+        REQUIRE(pq.toString() == ss.str());
 
 
 
 
 
 
+    }
+}
+
+TEST_CASE("dequeue ()"){
+
+    SECTION("ints"){
+
+        map<int, vector<int> > map;
+        int n = 10;
+        int vals[] = {15, 16, 17, 6, 7, 8, 9, 2, 1,12};
+        int prs[] = {1, 2, 3, 2, 2, 2, 2, 3, 3,4};
+        priorityqueue<int> pq;
+        for (int i = 0; i < n; i++) {
+            pq.enqueue(vals[i], prs[i]);
+            map[prs[i]].push_back(vals[i]);
+        }
+        REQUIRE(pq.Size() ==  10);
+        for (auto e: map) {
+            vector <int> values = e.second;
+            for (size_t j = 0; j < values.size(); j++){
+                REQUIRE(pq.dequeue() == values[j]);
+            }
+        }
+        REQUIRE(pq.Size() ==  0);
+
+    }
 
 
 
